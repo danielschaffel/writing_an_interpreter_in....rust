@@ -28,15 +28,15 @@ fn simple_variable_initialization() {
     let res = scan(test);
 
     assert_eq!(res.len(), 5);
-    assert!(matches!(res.get(0).unwrap(), Token::Let(LetToken {})));
+    assert!(matches!(res.get(0).unwrap(), Token::Let));
 
     let _id_id = "x".to_string();
-    assert!(matches!(res.get(1).unwrap(), Token::Id(IdToken{value: _id_id } )));
+    assert!(matches!(res.get(1).unwrap(), Token::Id{value: _id_id } ));
 
-    assert!(matches!(res.get(2).unwrap(), Token::Assign(AssignToken {})));
+    assert!(matches!(res.get(2).unwrap(), Token::Assign));
 
     let _value = "5".to_string();
-    assert!(matches!(res.get(3).unwrap(), Token::Number(NumberToken {value: _value})));
+    assert!(matches!(res.get(3).unwrap(), Token::Number{value: _value}));
 
-    assert!(matches!(res.get(4).unwrap(), Token::Semi(SemiToken {})));
+    assert!(matches!(res.get(4).unwrap(), Token::Semi));
 }

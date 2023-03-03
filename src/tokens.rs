@@ -1,101 +1,45 @@
 use std::{iter::Peekable, slice::Chunks};
 
 #[derive(Debug, Clone)]
-pub struct NumberToken {
-    pub value: String
-} 
-
-#[derive(Debug, Clone)]
-pub struct RealToken {
-    pub value: String
-} 
-
-#[derive(Debug, Clone)]
-pub struct IdToken {
-    pub value: String
-} 
-
-#[derive(Debug, Clone)]
-pub struct AddToken {} 
-
-#[derive(Debug, Clone)]
-pub struct MinusToken {} 
-
-#[derive(Debug, Clone)]
-pub struct MultToken {} 
-
-#[derive(Debug, Clone)]
-pub struct DivToken {} 
-
-#[derive(Debug, Clone)]
-pub struct LParenToken {} 
-
-#[derive(Debug, Clone)]
-pub struct RParenToken {} 
-
-#[derive(Debug, Clone)]
-pub struct LBraceToken {} 
-
-#[derive(Debug, Clone)]
-pub struct RBraceToken {} 
-
-#[derive(Debug, Clone)]
-pub struct IfToken {} 
-
-#[derive(Debug, Clone)]
-pub struct LetToken {} 
-
-#[derive(Debug, Clone)]
-pub struct AssignToken {} 
-
-#[derive(Debug, Clone)]
-pub struct EqualityToken {} 
-
-// TODO: add not equal and just negate tokens
-
-#[derive(Debug, Clone)]
-pub struct SemiToken {} 
-
-#[derive(Debug, Clone)]
 pub enum Token {
-    Number(NumberToken),
-    Real(RealToken),
-    Add(AddToken),
-    Minus(MinusToken),
-    Mult(MultToken),
-    Div(DivToken),
-    LParen(LParenToken),
-    RParen(RParenToken),
-    LBrace(LBraceToken),
-    RBrace(RBraceToken),
-    IF(IfToken),
-    Let(LetToken),
-    Assign(AssignToken),
-    Equal(EqualityToken),
-    Semi(SemiToken),
-    Id(IdToken)
+    Number{value: String},
+    Real{value: String},
+    Add,
+    Minus,
+    Mult,
+    Div,
+    LParen,
+    RParen,
+    LBrace,
+    RBrace,
+    IF,
+    Let,
+    Assign,
+    Equal,
+    Semi,
+    Id{ value: String}
 }
 
 impl Token {
 
     pub fn value(&self) -> Option<String> {
         match self {
-            Token::Number(c) => Some(Some(c).unwrap().value.to_string()),
-            Token::Real(c) => Some(Some(c).unwrap().value.to_string()),
-            Token::Add(_) => Some("+".to_string()),
-            Token::Minus(_) => Some("-".to_string()),
-            Token::Mult(_) => Some("*".to_string()),
-            Token::Div(_) => Some("/".to_string()),
-            Token::LParen(_) => Some("(".to_string()),
-            Token::RParen(_) => Some(")".to_string()),
-            Token::LBrace(_) => Some("{".to_string()),
-            Token::RBrace(_) => Some("}".to_string()),
-            Token::Let(_) => Some("if".to_string()),
-            Token::IF(_) => Some("}".to_string()),
-            Token::Assign(_) => Some("=".to_string()),
-            Token::Equal(_) => Some("==".to_string()),
-            Token::Semi(_) => Some(";".to_string()),
-            Token::Id(c) => Some(Some(c).unwrap().value.to_string())
+            Token::Number{value} => Some(value.clone()),
+            Token::Real{value} => Some(value.clone()),
+            Token::Add => Some("+".to_string()),
+            Token::Minus => Some("-".to_string()),
+            Token::Mult => Some("*".to_string()),
+            Token::Div => Some("/".to_string()),
+            Token::LParen => Some("(".to_string()),
+            Token::RParen => Some(")".to_string()),
+            Token::LBrace => Some("{".to_string()),
+            Token::RBrace => Some("}".to_string()),
+            Token::Let => Some("if".to_string()),
+            Token::IF => Some("}".to_string()),
+            Token::Assign => Some("=".to_string()),
+            Token::Equal => Some("==".to_string()),
+            Token::Semi => Some(";".to_string()),
+            Token::Id{value} => Some(value.clone()),
         }
     }
 }
@@ -118,7 +62,7 @@ pub fn scan(input: String) -> Vec<Token> {
                         let token = get_number(&mut iter, &mut number);
                         tokens.push(token);
                     } else {
-                        tokens.push(Token::Number(NumberToken { value: number.clone() }))
+                        tokens.push(Token::Number {value: number.clone()})
                     }
                 } else if c[0].is_ascii_alphabetic() {
                     let mut id = String::from(c[0]);
@@ -127,11 +71,11 @@ pub fn scan(input: String) -> Vec<Token> {
                         get_id(&mut iter, &mut id);
                     }
                     if id == "if" {
-                        tokens.push(Token::IF(IfToken {}));
+                        tokens.push(Token::IF);
                     } else if id == "let" {
-                        tokens.push(Token::Let(LetToken {}));
+                        tokens.push(Token::Let);
                     } else {
-                        tokens.push(Token::Id(IdToken { value: id.clone()}));
+                        tokens.push(Token::Id {value: id.clone()});
                     }
 
 
@@ -139,17 +83,17 @@ pub fn scan(input: String) -> Vec<Token> {
                     match c[0] {
                         '=' => {
                             // TODO: figure out == logic
-                            tokens.push(Token::Assign(AssignToken {}))
+                            tokens.push(Token::Assign)
                         },
-                        '+' => tokens.push(Token::Add(AddToken {})),
-                        '-' => tokens.push(Token::Minus(MinusToken {})),
-                        '*' => tokens.push(Token::Mult(MultToken {})),
-                        '/' => tokens.push(Token::Div(DivToken {})),
-                        '(' => tokens.push(Token::LParen(LParenToken {})),
-                        ')' => tokens.push(Token::RParen(RParenToken {})),
-                        '{' => tokens.push(Token::LBrace(LBraceToken {})),
-                        '}' => tokens.push(Token::RBrace(RBraceToken {})),
-                        ';' => tokens.push(Token::Semi(SemiToken {})),
+                        '+' => tokens.push(Token::Add),
+                        '-' => tokens.push(Token::Minus),
+                        '*' => tokens.push(Token::Mult),
+                        '/' => tokens.push(Token::Div),
+                        '(' => tokens.push(Token::LParen),
+                        ')' => tokens.push(Token::RParen),
+                        '{' => tokens.push(Token::LBrace),
+                        '}' => tokens.push(Token::RBrace),
+                        ';' => tokens.push(Token::Semi),
                         _ => ()
                     }
                 }
@@ -191,19 +135,19 @@ fn get_number(iter: &mut Peekable<Chunks<char>>, curr: &mut String) -> Token {
                 } else if ch == '.' {
                     curr.push(ch);
                     get_number(iter, curr);
-                    return Token::Real(RealToken{value: curr.clone()});
+                    return Token::Real{value: curr.clone()};
                 } else if !ch.is_ascii_digit() {
                     break;
                 }else {
                     curr.push(ch);
                     if iter.peek().is_some() {
                         match iter.peek().unwrap()[0] {
-                            '/' => return Token::Number(NumberToken{ value: curr.clone() }),
-                            '*' => return Token::Number(NumberToken{ value: curr.clone() }),
-                            '+' => return Token::Number(NumberToken{ value: curr.clone() }),
-                            '-' => return Token::Number(NumberToken{ value: curr.clone() }),
-                            '(' => return Token::Number(NumberToken{ value: curr.clone() }),
-                            ')' => return Token::Number(NumberToken{ value: curr.clone() }),
+                            '/' => return Token::Number{ value: curr.clone() },
+                            '*' => return Token::Number{ value: curr.clone() },
+                            '+' => return Token::Number{ value: curr.clone() },
+                            '-' => return Token::Number{ value: curr.clone() },
+                            '(' => return Token::Number{ value: curr.clone() },
+                            ')' => return Token::Number{ value: curr.clone() },
                             _ => continue
                         }
                     }
@@ -213,7 +157,7 @@ fn get_number(iter: &mut Peekable<Chunks<char>>, curr: &mut String) -> Token {
 
     }
 
-    return Token::Number(NumberToken{ value: curr.clone() });
+    return Token::Number{ value: curr.clone() };
 }
 
 fn is_whitespace(c: char) -> bool {
