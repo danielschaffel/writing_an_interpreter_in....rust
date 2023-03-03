@@ -4,6 +4,7 @@ use std::{iter::Peekable, slice::Chunks};
 pub enum Token {
     Number{value: String},
     Real{value: String},
+    Char{value: char},
     Add,
     Minus,
     Mult,
@@ -16,31 +17,9 @@ pub enum Token {
     Let,
     Assign,
     Equal,
+    Equality,
     Semi,
     Id{ value: String}
-}
-
-impl Token {
-    pub fn value(&self) -> Option<String> {
-        match self {
-            Token::Number{value} => Some(value.clone()),
-            Token::Real{value} => Some(value.clone()),
-            Token::Add => Some("+".to_string()),
-            Token::Minus => Some("-".to_string()),
-            Token::Mult => Some("*".to_string()),
-            Token::Div => Some("/".to_string()),
-            Token::LParen => Some("(".to_string()),
-            Token::RParen => Some(")".to_string()),
-            Token::LBrace => Some("{".to_string()),
-            Token::RBrace => Some("}".to_string()),
-            Token::Let => Some("if".to_string()),
-            Token::IF => Some("}".to_string()),
-            Token::Assign => Some("=".to_string()),
-            Token::Equal => Some("==".to_string()),
-            Token::Semi => Some(";".to_string()),
-            Token::Id{value} => Some(value.clone()),
-        }
-    }
 }
 
 pub fn scan(input: String) -> Vec<Token> {
@@ -65,21 +44,35 @@ pub fn scan(input: String) -> Vec<Token> {
                 } else if c[0].is_ascii_alphabetic() {
                     let mut id = String::from(c[0]);
 
-                    if iter.peek().is_some() && valid_id_char(iter.peek().unwrap()[0]) {
-                        get_id(&mut iter, &mut id);
-                    }
-                    if id == "if" {
-                        tokens.push(Token::IF);
-                    } else if id == "let" {
-                        tokens.push(Token::Let);
-                    } else {
-                        tokens.push(Token::Id {value: id.clone()});
+                    get_id(&mut iter, &mut id);
+
+                    match id.as_str() {
+                        "if" => tokens.push(Token::IF),
+                        "let" => tokens.push(Token::Let),
+                        _ => tokens.push(Token::Id {value: id.clone()})
                     }
                 } else {
                     match c[0] {
+                        '\''  => {
+                            if iter.peek().unwrap()[0] == '\'' {
+                                panic!("Char can't be empty");
+                            } else {
+                                tokens.push(Token::Char{value: iter.next().unwrap()[0]});
+
+                                if iter.next().unwrap()[0] != '\'' {
+                                    panic!("Char must be closed with '");
+                                }
+
+                            }
+                        },
                         '=' => {
                             // TODO: figure out == logic
-                            tokens.push(Token::Assign)
+                            if iter.peek().unwrap()[0] == '=' {
+                                iter.next();
+                                tokens.push(Token::Equality);
+                            } else {
+                                tokens.push(Token::Assign);
+                            }
                         },
                         '+' => tokens.push(Token::Add),
                         '-' => tokens.push(Token::Minus),

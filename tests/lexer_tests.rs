@@ -64,3 +64,20 @@ fn simple_variable_initialization() {
 
     assert!(matches!(res.get(4).unwrap(), Token::Semi));
 }
+
+#[test]
+fn simple_char_variable() {
+    let tokens = scan(String::from("let x='a';"));
+
+    assert_eq!(tokens.len(), 5);
+    assert!(matches!(tokens.get(0).unwrap(), Token::Let));
+    assert_eq!(tokens.get(1).unwrap(), &Token::Id { value: "x".to_string() });
+}
+
+#[test]
+fn equality_not_equal() {
+    let tokens = scan(String::from("1 == 2"));
+
+    assert_eq!(tokens.len(), 3);
+    assert!(matches!(tokens.get(1).unwrap(), Token::Equality));
+}
