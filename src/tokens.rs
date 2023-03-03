@@ -1,6 +1,6 @@
 use std::{iter::Peekable, slice::Chunks};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Token {
     Number{value: String},
     Real{value: String},
@@ -21,7 +21,6 @@ pub enum Token {
 }
 
 impl Token {
-
     pub fn value(&self) -> Option<String> {
         match self {
             Token::Number{value} => Some(value.clone()),
@@ -50,7 +49,6 @@ pub fn scan(input: String) -> Vec<Token> {
     let mut iter = chars.chunks(1).peekable();
     while iter.peek().is_some() {
         let curr = iter.next();
-        println!("{}", curr.unwrap()[0]);
         match curr {
             Some(c) => {
                 if is_whitespace(c[0]) {
@@ -77,8 +75,6 @@ pub fn scan(input: String) -> Vec<Token> {
                     } else {
                         tokens.push(Token::Id {value: id.clone()});
                     }
-
-
                 } else {
                     match c[0] {
                         '=' => {

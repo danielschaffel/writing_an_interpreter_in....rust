@@ -15,11 +15,35 @@ fn simple_math_expressions() {
 }
 
 #[test]
-fn simple_plus() {
+fn simple_binop() {
     let plus = String::from("1 + 2");
     let res_plus = scan(plus);
     assert_eq!(res_plus.len(), 3);
 
+    let one_enum = res_plus.get(0).unwrap();
+    let one = &Token::Number{value: "1".to_string()};
+    assert_eq!(one_enum, one);
+
+    assert_eq!(res_plus.get(1).unwrap(), &Token::Add);
+
+    let two = &Token::Number{value: "2".to_string()}; 
+    assert_eq!(res_plus.get(2).unwrap(), two);
+}
+
+#[test]
+/// the string contains some weird spacing just to make sure it works
+fn with_parens() {
+    let parens = String::from("(1+2  )*   3"); 
+    let tokens = scan(parens);
+    assert_eq!(tokens.len(), 7);
+
+    assert_eq!(tokens.get(0).unwrap(), &Token::LParen);
+    assert_eq!(tokens.get(1).unwrap(), &Token::Number{value: "1".to_string()});
+    assert_eq!(tokens.get(2).unwrap(), &Token::Add);
+    assert_eq!(tokens.get(3).unwrap(), &Token::Number{value: "2".to_string()});
+    assert_eq!(tokens.get(4).unwrap(), &Token::RParen);
+    assert_eq!(tokens.get(5).unwrap(), &Token::Mult);
+    assert_eq!(tokens.get(6).unwrap(), &Token::Number{value: "3".to_string()});
 }
 
 #[test]
