@@ -2,17 +2,17 @@ use std::{iter::Peekable, slice::Chunks};
 
 #[derive(Debug, Clone)]
 pub struct NumberToken {
-    value: String
+    pub value: String
 } 
 
 #[derive(Debug, Clone)]
 pub struct RealToken {
-    value: String
+    pub value: String
 } 
 
 #[derive(Debug, Clone)]
 pub struct IdToken {
-    value: String
+    pub value: String
 } 
 
 #[derive(Debug, Clone)]
